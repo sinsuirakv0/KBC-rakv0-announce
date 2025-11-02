@@ -23,8 +23,8 @@
     </header>
 
     <section class="hero">
-      <h2>カスタム通知をあなたのタイミングで</h2>
-      <p>◯時間◯分後や指定時刻（タイムゾーン対応）で通知。PWA対応、ブラウザ通知＋画面上部のLINE風表示。</p>
+      <h2>予定時刻を通知でお知らせ</h2>
+      <p>時間を指定する事で通知を送ります。</p>
     </section>
 
     <div class="grid">
@@ -33,7 +33,7 @@
         <h3>新しい通知を作成</h3>
         <form id="createForm">
           <label>通知メッセージ</label>
-          <input type="text" id="message" placeholder="例: 休憩終了" required />
+          <input type="text" id="message" placeholder="例: 強襲" required />
 
           <label>モード</label>
           <select id="mode">
@@ -45,7 +45,7 @@
           <div id="afterInputs">
             <div class="time-inputs">
               <input type="number" id="hours" placeholder="時間" min="0" value="0" />
-              <input type="number" id="minutes" placeholder="分" min="0" max="59" value="10" />
+              <input type="number" id="minutes" placeholder="分" min="0" max="59" value="30" />
             </div>
             <label>ループ回数（0=繰り返さない）</label>
             <input type="number" id="loopCount" min="0" value="0" />
