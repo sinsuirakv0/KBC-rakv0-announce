@@ -421,3 +421,47 @@ navigator.serviceWorker?.addEventListener('message', async (event) => {
     }
   }
 });
+
+// script.js の末尾に追加する例
+
+// ===== タイムゾーン設定部分 開始 =====
+const timezoneSelect = document.getElementById("timezone");
+for (let i = -12; i <= 14; i++) {
+  const option = document.createElement("option");
+  const sign = i >= 0 ? "+" : "";
+  option.value = i;
+  option.textContent = `GMT${sign}${i}:00`;
+  timezoneSelect.appendChild(option);
+}
+
+const savedZone = localStorage.getItem("timezoneOffset");
+if (savedZone !== null) timezoneSelect.value = savedZone;
+
+timezoneSelect.addEventListener("change", () => {
+  localStorage.setItem("timezoneOffset", timezoneSelect.value);
+  updateDisplayedTime();
+});
+
+async function getUTCNow() {
+  try {
+    const response = await fetch("https://worldtimeapi.org/api/timezone/Etc/UTC");
+    const data = await response.json();
+    return new Date(data.utc_datetime);
+  } catch (e) {
+    console.error("UTC時刻取得失敗:", e);
+    return new Date(new Date().toISOString());
+  }
+}
+
+async function updateDisplayedTime() {
+  const utc = await getUTCNow();
+  const offset = parseInt(localStorage.getItem("timezoneOffset") || "0", 10);
+  const local = new Date(utc.getTime() + offset * 3600000);
+
+  const el = document.getElementById("current-time");
+  if (el) el.textContent = local.toLocaleString("ja-JP", { hour12: false });
+}
+
+updateDisplayedTime();
+setInterval(updateDisplayedTime, 60000);
+// ===== タイムゾーン設定部分 終了 =====
