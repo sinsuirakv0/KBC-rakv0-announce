@@ -12,10 +12,9 @@
   <div class="container">
     <header class="header">
       <div class="logo">
-  <img src="assets/logo.png" alt="通知スケジューラーのロゴ">
-  <link rel="icon" type="image/png" href="assets/logo.png">
-  <h1>通知スケジューラー</h1>
-</div>
+        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTAiIGZpbGw9IiMzYjgyZjYiLz4KPHBhdGggZD0iTTQwIDEzYTIgMiAwIDEgMC0zIDAgMiAyIDAgMCAwIDMgMFpNNDMgMTZMMzkuNSAxMC43QTMuNSAzLjUgMCAwIDAgMzYuOSAxMEg0M0oiIGZpbGw9IiNmZmYiLz4KPC9zdmc+" alt="logo" />
+        <h1>通知スケジューラー</h1>
+      </div>
       <nav class="nav">
         <a href="#create">新規作成</a>
         <a href="#list">通知一覧</a>
@@ -24,8 +23,8 @@
     </header>
 
     <section class="hero">
-      <h2>予定時刻を通知でお知らせ</h2>
-      <p>時間を指定する事で通知を送ります。</p>
+      <h2>カスタム通知をあなたのタイミングで</h2>
+      <p>◯時間◯分後や指定時刻（タイムゾーン対応）で通知。PWA対応、ブラウザ通知＋画面上部のLINE風表示。</p>
     </section>
 
     <div class="grid">
@@ -34,7 +33,7 @@
         <h3>新しい通知を作成</h3>
         <form id="createForm">
           <label>通知メッセージ</label>
-          <input type="text" id="message" placeholder="例: 強襲" required />
+          <input type="text" id="message" placeholder="例: 休憩終了" required />
 
           <label>モード</label>
           <select id="mode">
@@ -46,7 +45,7 @@
           <div id="afterInputs">
             <div class="time-inputs">
               <input type="number" id="hours" placeholder="時間" min="0" value="0" />
-              <input type="number" id="minutes" placeholder="分" min="0" max="59" value="30" />
+              <input type="number" id="minutes" placeholder="分" min="0" max="59" value="10" />
             </div>
             <label>ループ回数（0=繰り返さない）</label>
             <input type="number" id="loopCount" min="0" value="0" />
@@ -95,6 +94,8 @@
           <select id="timezone">
             <option value="Asia/Tokyo" selected>日本 (JST)</option>
             <option value="UTC">UTC</option>
+            <option value="America/New_York">America/New_York</option>
+            <option value="Europe/London">Europe/London</option>
           </select>
 
           <div style="margin-top:12px;">

@@ -132,26 +132,6 @@ footer{
   opacity:0;
 }
 
-.sound-controls {
-  margin-top: 10px;
-  background: #0f172a;
-  padding: 10px;
-  border-radius: 8px;
-  color: #ddd;
-  font-size: 14px;
-}
-.sound-controls input[type="range"] {
-  vertical-align: middle;
-  margin-left: 5px;
-}
-
-.notif .icon img {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  object-fit: cover;
-}
-
 /* フォーム類 */
 input[type="text"], input[type="number"], select {
   width:100%;
