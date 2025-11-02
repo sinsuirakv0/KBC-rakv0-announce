@@ -1,0 +1,15 @@
+{
+  "name": "通知スケジューラー",
+  "short_name": "通知スケジューラー",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#071427",
+  "theme_color": "#0b1220",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iMTAiIGZpbGw9IiMzYjgyZjYiLz4KPHBhdGggZD0iTTQwIDEzYTIgMiAwIDEgMC0zIDAgMiAyIDAgMCAwIDMgMFpNNDMgMTZMMzkuNSAxMC43QTMuNSAzLjUgMCAwIDAgMzYuOSAxMEg0M0oiIGZpbGw9IiNmZmYiLz4KPC9zdmc+" ,
+      "sizes": "64x64",
+      "type": "image/svg+xml"
+    }
+  ]
+}

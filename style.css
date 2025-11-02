@@ -1,0 +1,218 @@
+:root {
+  --bg:#0b1220; --card:#071427; --muted:#9fb0c8; --accent:#3b82f6;
+  --glass: rgba(255,255,255,0.03); --text:#e6f0fb;
+}
+
+/* ベース設定 */
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:"Noto Sans JP",sans-serif;
+  background:linear-gradient(180deg,#051026 0%,#081428 60%);
+  color:var(--text);
+  padding:20px;
+  display:flex;
+  justify-content:center;
+  animation: fadeIn 1s ease forwards;
+  opacity:0;
+}
+
+/* フェードインアニメーション */
+@keyframes fadeIn {
+  from { opacity:0; transform: translateY(10px); }
+  to { opacity:1; transform: translateY(0); }
+}
+
+/* コンテナ */
+.container{
+  width:1100px;
+  max-width:100%;
+  display:grid;
+  gap:16px;
+}
+
+/* ヘッダー */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+  animation: fadeIn 1s ease 0.2s forwards;
+  opacity:0;
+}
+
+/* ロゴ */
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.logo img{
+  width:40px;
+  height:40px;
+  border-radius:8px;
+  box-shadow:0 0 10px rgba(59,130,246,0.4);
+  animation: floatLogo 3s ease-in-out infinite;
+}
+@keyframes floatLogo {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+h1{margin:0;font-size:22px;}
+
+/* ナビゲーション */
+.nav{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.nav a{
+  color:var(--muted);
+  text-decoration:none;
+  font-size:14px;
+  transition:0.2s;
+}
+.nav a:hover{
+  color:var(--accent);
+}
+
+/* ヒーローセクション */
+.hero{
+  text-align:center;
+  padding:60px 20px;
+  background:var(--card);
+  border-radius:12px;
+  box-shadow:0 8px 30px rgba(2,6,23,0.6);
+  animation: fadeIn 1s ease 0.4s forwards;
+  opacity:0;
+}
+.hero h2{font-size:28px;margin:0 0 10px;}
+.hero p{color:var(--muted);font-size:15px;margin:0;}
+
+/* カードグリッド */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
+  gap:16px;
+}
+.card{
+  background:var(--card);
+  border-radius:12px;
+  padding:20px;
+  box-shadow:0 8px 30px rgba(2,6,23,0.6);
+  transition:transform 0.3s, box-shadow 0.3s;
+  opacity:0;
+  animation: fadeIn 1s ease forwards;
+}
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 10px 40px rgba(59,130,246,0.3);
+}
+.card h3{
+  margin-top:0;
+  font-size:18px;
+  color:var(--accent);
+}
+.card p{
+  font-size:14px;
+  color:var(--muted);
+}
+
+/* フッター */
+footer{
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+  margin-top:30px;
+  border-top:1px solid rgba(255,255,255,0.05);
+  padding-top:10px;
+  animation: fadeIn 1s ease 1.2s forwards;
+  opacity:0;
+}
+
+/* フォーム類 */
+input[type="text"], input[type="number"], select {
+  width:100%;
+  padding:8px 10px;
+  margin:6px 0 12px 0;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.02);
+  color:var(--text);
+}
+.time-inputs{display:flex;gap:8px}
+.time-inputs input{flex:1}
+
+/* ボタン */
+.btn{
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  padding:10px 14px;
+  border-radius:8px;
+  cursor:pointer;
+}
+.btn:hover{opacity:0.95}
+
+/* muted */
+.muted{color:var(--muted);font-size:13px;margin-top:8px}
+
+/* 通知一覧アイテム */
+.notification-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:8px;
+  border-radius:8px;
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  margin-bottom:8px;
+}
+.notification-item .meta{color:var(--muted);font-size:13px}
+.notification-actions button{margin-left:6px;padding:6px 8px;border-radius:6px;border:none;background:rgba(255,255,255,0.03);color:var(--muted);cursor:pointer}
+
+/* LINE風通知（上部） */
+.notif-area.top{
+  position:fixed;
+  top:12px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:9999;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  width: min(720px, calc(100% - 40px));
+  pointer-events:none;
+}
+.notif {
+  pointer-events:auto;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius:12px;
+  padding:12px 14px;
+  box-shadow:0 8px 30px rgba(2,6,23,0.6);
+  animation: notifIn 0.35s ease;
+  border-left:4px solid var(--accent);
+}
+.notif .icon{
+  width:40px;height:40px;border-radius:8px;background:var(--accent);
+  display:flex;align-items:center;justify-content:center;color:white;font-weight:700;
+}
+.notif .body{flex:1}
+.notif .body p{margin:0;font-size:15px}
+.notif .body span{color:var(--muted);font-size:12px}
+@keyframes notifIn { from { transform: translateY(-8px); opacity:0 } to { transform: translateY(0); opacity:1 } }
+@keyframes notifOut { from { opacity:1 } to { opacity:0; transform: translateY(-8px) } }
+
+/* weekday chips */
+.weekday-chips label{display:inline-flex;align-items:center;gap:6px;margin-right:8px;color:var(--muted);cursor:pointer}
+.weekday-chips input{width:16px;height:16px}
+
+/* responsive */
+@media (max-width:720px){
+  .container{padding:12px}
+  .notif {padding:10px}
+}
