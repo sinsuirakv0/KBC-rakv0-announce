@@ -113,21 +113,12 @@
       <!-- 設定 -->
       <div class="card" id="settings">
         <h3>設定</h3>
-        <label><input type="checkbox" id="soundToggle" checked /> 通知音を鳴らす</label>
         <label><input type="checkbox" id="usePWAToggle" /> PWA（ホームに追加）を案内</label>
         <p class="muted">通知許可がまだの場合は、上部の「通知を有効にする」ボタンを押してください。</p>
         <div style="margin-top:10px;">
           <button id="requestPermission" class="btn">通知を有効にする</button>
           <button id="installPWA" class="btn" style="display:none">ホーム画面に追加</button>
          <div class="sound-controls">
-  <label>
-    🔈 通知音量:
-    <input type="range" id="volumeControl" min="0" max="1" step="0.05" value="0.6">
-  </label>
-  <label>
-    <input type="checkbox" id="muteToggle"> ミュート
-  </label>
-</div>
         </div>
       </div>
     </div>
