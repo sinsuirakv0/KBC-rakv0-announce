@@ -6,13 +6,6 @@
   - ブラウザがPeriodic Syncをサポートしていない場合は、ページが閉じているときに通知が来ない可能性があります（対策はWeb Pushサーバーを用意すること）
 */
 
-// ===== 通知音の再生関数 =====
-function playNotificationSound() {
-  const audio = new Audio('assets/notify.mp3');
-  audio.volume = 0.6; // 音量調整（0.0〜1.0）
-  audio.play().catch(err => console.warn("通知音の再生に失敗:", err));
-}
-
 const STORAGE_KEY = 'ns_notifications';
 const notifArea = document.getElementById('notifArea');
 const ding = document.getElementById('ding');
@@ -338,141 +331,17 @@ async function fireNotification(item){
   appendHistoryEntry(item);
 }
 
-// 通知処理メイン
-function handleNotification(item) {
-  // in-page popup
-  if (item.notifyType === 'popup' || item.notifyType === 'both') {
-    showInPageNotif(item);
-  }
-
-  // 通知音
-  if (item.soundOn && document.getElementById('soundToggle')?.checked) {
-    playNotifSound(item.soundType || 'default');
-  }
-
-  // 履歴追加
-  appendHistoryEntry(item);
-}
-
-// 通知音の再生（音量・ミュート対応）
-function playNotifSound(type = 'default') {
-  // ミュートなら再生しない
-  const mute = document.getElementById('muteToggle')?.checked;
-  if (mute) return;
-
-  // 音量取得
-  const vol = parseFloat(document.getElementById('volumeControl')?.value || 0.6);
-
-  let src;
-  switch (type) {
-    case 'alert':   src = './sounds/alert.mp3'; break;
-    case 'success': src = './sounds/success.mp3'; break;
-    case 'message': src = './sounds/message.mp3'; break;
-    default:        src = './sounds/ding.mp3'; break;
-  }
-
-  const audio = new Audio(src);
-  audio.volume = vol;
-  try {
-    // iOS対策：一度タップしてユーザー操作済なら再生可能
-    audio.play().catch(err => console.warn('音声再生がブロックされました:', err));
-  } catch (e) {
-    console.error('通知音エラー:', e);
-  }
-}
-
-// 通知UI（画像アイコン対応）
-function showInPageNotif(item) {
+// in-page notification UI
+function showInPageNotif(item){
   const d = document.createElement('div');
   d.className = 'notif';
-
-  // アイコン決定
-  let iconHTML = '<div class="icon">🔔</div>';
-  if (item.iconImg) {
-    iconHTML = `<div class="icon"><img src="${item.iconImg}" alt="icon"></div>`;
-  } else if (item.iconEmoji) {
-    iconHTML = `<div class="icon">${item.iconEmoji}</div>`;
-  }
-
-  d.innerHTML = `
-    ${iconHTML}
-    <div class="body">
-      <p>${escapeHtml(item.message)}</p>
-      <span>${new Date().toLocaleString()}</span>
-    </div>`;
-
+  d.innerHTML = `<div class="icon">🔔</div><div class="body"><p>${escapeHtml(item.message)}</p><span>${new Date().toLocaleString()}</span></div>`;
   notifArea.prepend(d);
-
-  // 4秒後にフェードアウト
-  setTimeout(() => {
+  // auto dismiss after 4s
+  setTimeout(()=> {
     d.style.animation = 'notifOut 0.3s forwards';
-    setTimeout(() => d.remove(), 300);
+    setTimeout(()=> d.remove(), 300);
   }, 4000);
-}
-
-// === 音量・ミュート設定の保存と復元 ===
-
-// ページ読み込み時に復元
-document.addEventListener('DOMContentLoaded', () => {
-  const vol = localStorage.getItem('notifVolume');
-  const mute = localStorage.getItem('notifMute');
-
-  if (vol !== null) {
-    const vElem = document.getElementById('volumeControl');
-    if (vElem) vElem.value = vol;
-  }
-
-  if (mute !== null) {
-    const mElem = document.getElementById('muteToggle');
-    if (mElem) mElem.checked = mute === 'true';
-  }
-
-  // イベントリスナーを登録
-  setupSoundPersistence();
-});
-
-function setupSoundPersistence() {
-  const volElem = document.getElementById('volumeControl');
-  const muteElem = document.getElementById('muteToggle');
-
-  if (volElem) {
-    volElem.addEventListener('input', e => {
-      localStorage.setItem('notifVolume', e.target.value);
-    });
-  }
-
-  if (muteElem) {
-    muteElem.addEventListener('change', e => {
-      localStorage.setItem('notifMute', e.target.checked);
-    });
-  }
-}
-
-// === 通知音再生 ===
-function playNotifSound(type = 'default') {
-  // ミュートなら再生しない
-  const mute = document.getElementById('muteToggle')?.checked;
-  if (mute) return;
-
-  // 音量取得
-  const vol = parseFloat(document.getElementById('volumeControl')?.value || 0.6);
-
-  let src;
-  switch (type) {
-    case 'alert':   src = './sounds/alert.mp3'; break;
-    case 'success': src = './sounds/success.mp3'; break;
-    case 'message': src = './sounds/message.mp3'; break;
-    default:        src = './sounds/ding.mp3'; break;
-  }
-
-  const audio = new Audio(src);
-  audio.volume = vol;
-
-  try {
-    audio.play().catch(err => console.warn('音声再生がブロックされました:', err));
-  } catch (e) {
-    console.error('通知音エラー:', e);
-  }
 }
 
 // append history (we'll add a small history array in the item)
@@ -553,46 +422,62 @@ navigator.serviceWorker?.addEventListener('message', async (event) => {
   }
 });
 
-// script.js の末尾に追加する例
+<!-- タイムゾーン選択UI（HTMLに追加済みなら省略OK） -->
+<select id="timezone">
+  <!-- JSで自動生成するので空でもOK -->
+</select>
 
-// ===== タイムゾーン設定部分 開始 =====
+<script>
+// ===== タイムゾーン設定処理 =====
+
+// タイムゾーン選択肢を生成
 const timezoneSelect = document.getElementById("timezone");
 for (let i = -12; i <= 14; i++) {
   const option = document.createElement("option");
   const sign = i >= 0 ? "+" : "";
+  const label = `GMT${sign}${i}:00`;
   option.value = i;
-  option.textContent = `GMT${sign}${i}:00`;
+  option.textContent = label;
   timezoneSelect.appendChild(option);
 }
 
+// localStorageから選択を復元
 const savedZone = localStorage.getItem("timezoneOffset");
 if (savedZone !== null) timezoneSelect.value = savedZone;
 
+// 選択変更時に保存
 timezoneSelect.addEventListener("change", () => {
   localStorage.setItem("timezoneOffset", timezoneSelect.value);
   updateDisplayedTime();
 });
 
+// ===== 世界基準時（UTC）を参照する関数 =====
 async function getUTCNow() {
   try {
     const response = await fetch("https://worldtimeapi.org/api/timezone/Etc/UTC");
     const data = await response.json();
     return new Date(data.utc_datetime);
   } catch (e) {
-    console.error("UTC時刻取得失敗:", e);
+    console.error("UTC時刻の取得に失敗:", e);
+    // API失敗時は端末UTCを代用
     return new Date(new Date().toISOString());
   }
 }
 
+// ===== タイムゾーン反映付き時刻を表示 =====
 async function updateDisplayedTime() {
   const utc = await getUTCNow();
   const offset = parseInt(localStorage.getItem("timezoneOffset") || "0", 10);
-  const local = new Date(utc.getTime() + offset * 3600000);
+  const local = new Date(utc.getTime() + offset * 60 * 60 * 1000);
 
+  // ページ上の時刻表示がある場合はここで更新
   const el = document.getElementById("current-time");
   if (el) el.textContent = local.toLocaleString("ja-JP", { hour12: false });
 }
 
+// ページ読み込み時に実行
 updateDisplayedTime();
+
+// 1分ごとに更新（リアルタイム表示用）
 setInterval(updateDisplayedTime, 60000);
-// ===== タイムゾーン設定部分 終了 =====
+</script>
