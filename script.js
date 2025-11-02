@@ -6,6 +6,13 @@
   - ブラウザがPeriodic Syncをサポートしていない場合は、ページが閉じているときに通知が来ない可能性があります（対策はWeb Pushサーバーを用意すること）
 */
 
+// ===== 通知音の再生関数 =====
+function playNotificationSound() {
+  const audio = new Audio('assets/notify.mp3');
+  audio.volume = 0.6; // 音量調整（0.0〜1.0）
+  audio.play().catch(err => console.warn("通知音の再生に失敗:", err));
+}
+
 const STORAGE_KEY = 'ns_notifications';
 const notifArea = document.getElementById('notifArea');
 const ding = document.getElementById('ding');
@@ -331,17 +338,141 @@ async function fireNotification(item){
   appendHistoryEntry(item);
 }
 
-// in-page notification UI
-function showInPageNotif(item){
+// 通知処理メイン
+function handleNotification(item) {
+  // in-page popup
+  if (item.notifyType === 'popup' || item.notifyType === 'both') {
+    showInPageNotif(item);
+  }
+
+  // 通知音
+  if (item.soundOn && document.getElementById('soundToggle')?.checked) {
+    playNotifSound(item.soundType || 'default');
+  }
+
+  // 履歴追加
+  appendHistoryEntry(item);
+}
+
+// 通知音の再生（音量・ミュート対応）
+function playNotifSound(type = 'default') {
+  // ミュートなら再生しない
+  const mute = document.getElementById('muteToggle')?.checked;
+  if (mute) return;
+
+  // 音量取得
+  const vol = parseFloat(document.getElementById('volumeControl')?.value || 0.6);
+
+  let src;
+  switch (type) {
+    case 'alert':   src = './sounds/alert.mp3'; break;
+    case 'success': src = './sounds/success.mp3'; break;
+    case 'message': src = './sounds/message.mp3'; break;
+    default:        src = './sounds/ding.mp3'; break;
+  }
+
+  const audio = new Audio(src);
+  audio.volume = vol;
+  try {
+    // iOS対策：一度タップしてユーザー操作済なら再生可能
+    audio.play().catch(err => console.warn('音声再生がブロックされました:', err));
+  } catch (e) {
+    console.error('通知音エラー:', e);
+  }
+}
+
+// 通知UI（画像アイコン対応）
+function showInPageNotif(item) {
   const d = document.createElement('div');
   d.className = 'notif';
-  d.innerHTML = `<div class="icon">🔔</div><div class="body"><p>${escapeHtml(item.message)}</p><span>${new Date().toLocaleString()}</span></div>`;
+
+  // アイコン決定
+  let iconHTML = '<div class="icon">🔔</div>';
+  if (item.iconImg) {
+    iconHTML = `<div class="icon"><img src="${item.iconImg}" alt="icon"></div>`;
+  } else if (item.iconEmoji) {
+    iconHTML = `<div class="icon">${item.iconEmoji}</div>`;
+  }
+
+  d.innerHTML = `
+    ${iconHTML}
+    <div class="body">
+      <p>${escapeHtml(item.message)}</p>
+      <span>${new Date().toLocaleString()}</span>
+    </div>`;
+
   notifArea.prepend(d);
-  // auto dismiss after 4s
-  setTimeout(()=> {
+
+  // 4秒後にフェードアウト
+  setTimeout(() => {
     d.style.animation = 'notifOut 0.3s forwards';
-    setTimeout(()=> d.remove(), 300);
+    setTimeout(() => d.remove(), 300);
   }, 4000);
+}
+
+// === 音量・ミュート設定の保存と復元 ===
+
+// ページ読み込み時に復元
+document.addEventListener('DOMContentLoaded', () => {
+  const vol = localStorage.getItem('notifVolume');
+  const mute = localStorage.getItem('notifMute');
+
+  if (vol !== null) {
+    const vElem = document.getElementById('volumeControl');
+    if (vElem) vElem.value = vol;
+  }
+
+  if (mute !== null) {
+    const mElem = document.getElementById('muteToggle');
+    if (mElem) mElem.checked = mute === 'true';
+  }
+
+  // イベントリスナーを登録
+  setupSoundPersistence();
+});
+
+function setupSoundPersistence() {
+  const volElem = document.getElementById('volumeControl');
+  const muteElem = document.getElementById('muteToggle');
+
+  if (volElem) {
+    volElem.addEventListener('input', e => {
+      localStorage.setItem('notifVolume', e.target.value);
+    });
+  }
+
+  if (muteElem) {
+    muteElem.addEventListener('change', e => {
+      localStorage.setItem('notifMute', e.target.checked);
+    });
+  }
+}
+
+// === 通知音再生 ===
+function playNotifSound(type = 'default') {
+  // ミュートなら再生しない
+  const mute = document.getElementById('muteToggle')?.checked;
+  if (mute) return;
+
+  // 音量取得
+  const vol = parseFloat(document.getElementById('volumeControl')?.value || 0.6);
+
+  let src;
+  switch (type) {
+    case 'alert':   src = './sounds/alert.mp3'; break;
+    case 'success': src = './sounds/success.mp3'; break;
+    case 'message': src = './sounds/message.mp3'; break;
+    default:        src = './sounds/ding.mp3'; break;
+  }
+
+  const audio = new Audio(src);
+  audio.volume = vol;
+
+  try {
+    audio.play().catch(err => console.warn('音声再生がブロックされました:', err));
+  } catch (e) {
+    console.error('通知音エラー:', e);
+  }
 }
 
 // append history (we'll add a small history array in the item)
